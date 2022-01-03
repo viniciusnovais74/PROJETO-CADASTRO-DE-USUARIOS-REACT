@@ -1,20 +1,49 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import ColecaoCliente from "../beckend/db/ColecaoCliente"
 import Botao from "../components/Botao"
 import Formulario from "../components/Formulario"
 import Layout from "../components/Layout"
 import Tabela from "../components/Table"
+import ClienteRepositorio from "../core/ClenteRepositorio"
 import Cliente from "../core/Cliente"
-const clientes = [
-  new Cliente('Ana', 23, '1')
-]
+
 
 export default function Home() {
-const [cliente, setCliente] = useState<Cliente>(Cliente.nulo())
+
+  const repo: ClienteRepositorio = new ColecaoCliente()
+
+  const [cliente, setCliente] = useState<Cliente>(Cliente.nulo())
+
+  const [clientes, setClientes] = useState<Cliente[]>([])
+
   const [visivel, setVisivel] = useState<'tabela' | 'form'>('tabela')
 
-  function clienteSelecionado(cliente: Cliente) { }
+  useEffect(() => {
+    repo.obterTodos().then(setClientes)
+  }, [])
+
+  function obterTodos() {
+    repo.obterTodos().then(clientes => {
+      setClientes(clientes)
+      setVisivel('tabela')
+    })
+  }
+
+  function clienteSelecionado(cliente: Cliente) {
+    setCliente(cliente)
+    setVisivel('form')
+  }
+  function novoCliente() {
+    setCliente(Cliente.nulo())
+    setVisivel('form')
+  }
+
   function clienteExcluido(cliente: Cliente) { }
-  function salvarCliente(cliente: Cliente) { setVisivel("tabela") }
+
+ async function salvarCliente(cliente: Cliente) {
+    await repo.salvar(cliente)
+    obterTodos()
+  }
 
   return (
     <div className={`
@@ -26,7 +55,11 @@ const [cliente, setCliente] = useState<Cliente>(Cliente.nulo())
         {visivel === 'tabela' ? (
           <>
             <div className="flex justify-end">
-              <Botao cor="green" className='mb-4' onClick={() => setVisivel('form')}>New Client</Botao>
+              <Botao
+                cor="green"
+                className='mb-4'
+                onClick={novoCliente}
+              >Novo Cliente</Botao>
             </div>
             <Tabela clientes={clientes} clienteSelecionado={clienteSelecionado} clienteExcluido={clienteExcluido}></Tabela>
           </>
