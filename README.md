@@ -1,3 +1,20 @@
+CRIE UM ARQUIVO '.env.local' com os seguintes PARAMETROS : 
+NEXT_PUBLIC_FIREBASE_API_KEY=(Api KEY do Firebase)
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN= (AUTHDOMAIN FIREBASE)
+NEXT_PUBLIC_FIREBASE_PROJECT_ID= (PROJECT ID FIREBASE)
+
+Crie um databse Firestore com as seguintes regras de segurança
+<code>
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write;
+    }
+  }
+}
+</code>
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
